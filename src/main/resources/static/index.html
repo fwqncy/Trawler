@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en-AU" data-theme="tide">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Trawler</title>
+  <meta name="description" content="Stock against par across every store, with supplier orders raised automatically.">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#081233">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="/fonts/geist.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/fraunces-italic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/css/app.css">
+  <script>
+    // Apply the saved palette before first paint so the page never flashes the default.
+    try {
+      const saved = JSON.parse(localStorage.getItem('trawler.theme') || 'null');
+      if (saved && saved.name) {
+        const root = document.documentElement;
+        const sky = { tide: '#081233', claret: '#22050d' };
+        root.dataset.theme = saved.name;
+        for (const [key, value] of Object.entries(saved.tokens || {})) root.style.setProperty('--' + key, value);
+        document.querySelector('meta[name="theme-color"]').content = (saved.tokens || {})['sky-0'] || sky[saved.name] || sky.tide;
+      }
+    } catch (e) { /* storage unavailable: keep the default palette */ }
+  </script>
+  <script type="importmap">
+    { "imports": { "three": "/vendor/three/three.module.min.js" } }
+  </script>
+  <script defer src="/vendor/gsap/gsap.min.js"></script>
+  <script defer src="/vendor/gsap/SplitText.min.js"></script>
+  <script type="module" src="/js/main.js"></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to Content</a>
+  <canvas id="sky" aria-hidden="true"></canvas>
+
+  <header class="masthead" data-scrolled="false">
+    <nav class="topnav" aria-label="Primary">
+      <a class="brand" href="/" aria-label="Trawler overview">
+        <svg class="brand__mark" viewBox="0 0 32 32" aria-hidden="true"><use href="#i-fish"/></svg>
+        <span class="brand__word">Trawler</span>
+      </a>
+      <ul class="topnav__links" role="list">
+        <li><a href="/" data-nav="overview">Overview</a></li>
+        <li><a href="/stock" data-nav="stock">Stock</a></li>
+        <li><a href="/orders" data-nav="orders">Orders</a></li>
+        <li><a href="/stocktakes" data-nav="stocktakes">Stock-Takes</a></li>
+        <li><a href="/suppliers" data-nav="suppliers">Suppliers</a></li>
+        <li><a href="/products" data-nav="products">Products</a></li>
+        <li><a href="/movements" data-nav="movements">Ledger</a></li>
+      </ul>
+      <div class="topnav__tools">
+        <label class="store-switch">
+          <span class="visually-hidden">Store</span>
+          <svg aria-hidden="true"><use href="#i-store"/></svg>
+          <select id="store-select" name="store" autocomplete="off"></select>
+        </label>
+        <button class="icon-btn" type="button" id="open-palette" aria-label="Search & Commands" aria-keyshortcuts="Meta+K Control+K">
+          <svg aria-hidden="true"><use href="#i-search"/></svg>
+          <kbd class="kbd" data-shortcut-label>⌘K</kbd>
+        </button>
+        <a class="icon-btn" href="/settings" data-nav="settings" aria-label="Settings & Themes">
+          <svg aria-hidden="true"><use href="#i-palette"/></svg>
+        </a>
+        <button class="icon-btn menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Menu">
+          <svg aria-hidden="true"><use href="#i-menu"/></svg>
+        </button>
+      </div>
+    </nav>
+    <div class="mobile-menu" id="mobile-menu" hidden>
+      <ul role="list">
+        <li><a href="/" data-nav="overview">Overview</a></li>
+        <li><a href="/stock" data-nav="stock">Stock</a></li>
+        <li><a href="/orders" data-nav="orders">Orders</a></li>
+        <li><a href="/stocktakes" data-nav="stocktakes">Stock-Takes</a></li>
+        <li><a href="/suppliers" data-nav="suppliers">Suppliers</a></li>
+        <li><a href="/products" data-nav="products">Products</a></li>
+        <li><a href="/movements" data-nav="movements">Ledger</a></li>
+        <li><a href="/settings" data-nav="settings">Settings</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <section class="hero" data-sky>
+      <div class="wrap hero__inner">
+        <p class="eyebrow">Loading</p>
+        <h1 class="display">Trawler</h1>
+      </div>
+    </section>
+  </main>
+
+  <div class="toasts" id="toasts" role="status" aria-live="polite"></div>
+  <div class="grain" aria-hidden="true"></div>
+
+  <noscript>
+    <p class="noscript">Trawler needs JavaScript to run. The API is still available at <code>/api</code>.</p>
+  </noscript>
+
+  <svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="i-fish" viewBox="0 0 32 32"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 16c4-6 10-8 15-6 3 1 5 3 7 6-2 3-4 5-7 6-5 2-11 0-15-6Z"/><path d="M25 16l4-5v10l-4-5"/><circle cx="9" cy="14.5" r="1.1" fill="currentColor" stroke="none"/></g></symbol>
+    <symbol id="i-store" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10v10h16V10"/><path d="M3 10l2-6h14l2 6"/><path d="M3 10a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0"/><path d="M10 20v-5h4v5"/></g></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></g></symbol>
+    <symbol id="i-palette" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18c1.4 0 2-1 2-2 0-1.5-1.5-1.6-1.5-3 0-1 .8-1.6 2-1.6H17a4 4 0 0 0 4-4C21 6.4 17 3 12 3Z"/><circle cx="7.5" cy="11" r="1.2" fill="currentColor"/><circle cx="10.5" cy="7.3" r="1.2" fill="currentColor"/><circle cx="15" cy="7.6" r="1.2" fill="currentColor"/></g></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></g></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+    <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4l9 16H3Z"/><path d="M12 10v4"/><circle cx="12" cy="17" r=".6" fill="currentColor"/></g></symbol>
+    <symbol id="i-empty" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="8"/><path d="M6.5 17.5l11-11"/></g></symbol>
+    <symbol id="i-truck" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h11v10H3zM14 9h4l3 3v4h-7"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/></g></symbol>
+    <symbol id="i-clipboard" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4.5" width="14" height="16" rx="2"/><path d="M9 4.5h6v3H9zM9 12h6M9 16h4"/></g></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 19.5h14"/></g></symbol>
+    <symbol id="i-print" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M7 9V4h10v5M7 17H4v-7h16v7h-3"/><path d="M7 14h10v6H7z"/></g></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 4L9.5 14.5M20 4l-6.5 16-4-5.5L4 10.5Z"/></g></symbol>
+    <symbol id="i-arrows" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h14l-3-3M20 16H6l3 3"/></g></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-sparkle" viewBox="0 0 24 24"><path d="M12 3l1.8 5.4L19 10l-5.2 1.6L12 17l-1.8-5.4L5 10l5.2-1.6Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></symbol>
+    <symbol id="i-edit" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16Z"/><path d="M13.5 6.5l4 4"/></g></symbol>
+  </svg>
+</body>
+</html>

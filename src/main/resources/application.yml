@@ -1,0 +1,44 @@
+spring:
+  application:
+    name: trawler-api
+  datasource:
+    url: ${TRAWLER_DB_URL:jdbc:postgresql://localhost:5432/trawler}
+    username: ${TRAWLER_DB_USER:trawler}
+    password: ${TRAWLER_DB_PASSWORD:trawler}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        default_batch_fetch_size: 64
+        jdbc:
+          time_zone: UTC
+  mvc:
+    problemdetails:
+      enabled: true
+  jackson:
+    deserialization:
+      # Jackson 3 rejects a missing number or flag; treat it as 0 or false and let validation decide.
+      fail-on-null-for-primitives: false
+
+server:
+  port: ${PORT:8080}
+  compression:
+    enabled: true
+    mime-types: text/html,text/css,text/javascript,application/javascript,application/json,image/svg+xml,text/csv
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+trawler:
+  # Seeds four demo stores with 30 days of history the first time the database is empty.
+  demo-data: ${TRAWLER_DEMO_DATA:true}
+  timezone: Australia/Sydney
+  currency: AUD
+  reorder:
+    # When the autopilot drafts orders for stores that opted in. "-" turns it off.
+    cron: "0 0 5 * * *"

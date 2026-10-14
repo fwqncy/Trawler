@@ -1,0 +1,15 @@
+# Postgres for local runs if you don't have one installed: docker compose up -d
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: trawler
+      POSTGRES_USER: trawler
+      POSTGRES_PASSWORD: trawler
+    ports:
+      - "5432:5432"
+    volumes:
+      - trawler-data:/var/lib/postgresql/data
+
+volumes:
+  trawler-data:
